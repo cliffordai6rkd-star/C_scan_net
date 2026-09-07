@@ -1,0 +1,14 @@
+# 推荐使用 uv 安装并锁定环境：
+#   uv sync --exact
+# 本项目 pyproject.toml 当前锁定 CUDA 12.6 版 PyTorch。
+# 如果只使用 requirements.txt，请按硬件选择 PyTorch 的安装源。
+torch>=2.0
+torchvision>=0.15
+transformers>=4.56.0
+safetensors>=0.4
+
+# 数据、图像和训练工具
+Pillow>=9.0
+openpyxl>=3.1
+tqdm>=4.65
+wandb>=0.16

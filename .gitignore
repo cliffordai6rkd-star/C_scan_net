@@ -1,0 +1,11 @@
+# 本地环境和 uv 缓存（体积很大，不提交）
+.venv/
+.uv-cache/
+
+/dataset
+# 运行产物
+checkpoints/
+grid_search_runs/
+wandb/
+__pycache__/
+*.pyc
