@@ -6,13 +6,17 @@ import math
 import random
 import re
 
+from tqdm import tqdm
+
 from openpyxl import load_workbook
 from PIL import Image
 
 import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
-from tqdm.auto import tqdm
+
+from pathlib import Path
+# from dataloader import build_records
 
 
 @dataclass(frozen=True)
@@ -536,3 +540,24 @@ def build_datasets(
             print(f"  - {path}")
 
     return train_dataset, validation_dataset
+
+if __name__ == "__main__":
+
+
+    records, _ = build_records()
+
+    special = [
+        r for r in records
+        if "astm" not in Path(r.image_path).stem.lower()
+        and Path(r.image_path).stem.lower().endswith("t")
+    ]
+
+    print("t samples:", len(special))
+
+    for r in special:
+        print(
+            Path(r.image_path).name,
+            r.impact_energy_j,
+            r.family,
+            r.condition_id,
+        )

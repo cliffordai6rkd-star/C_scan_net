@@ -71,7 +71,7 @@ class TrainerConfig:
     seed: int = 42
     loss: str = "mse"
     progress_bar: bool = True
-    gradient_clip_norm: Optional[float] = 1.0
+    gradient_clip_norm: Optional[float] = None
     use_amp: bool = False
     checkpoint_dir: str = "checkpoints"
     monitor: str = "val_loss"
