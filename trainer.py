@@ -339,8 +339,13 @@ class Trainer:
 
         predictions = torch.cat(all_predictions, dim=0)
         targets = torch.cat(all_targets, dim=0)
-        metrics = compute_metrics(predictions, targets)
-        metrics["loss"] = sum(losses) / len(losses)
+        metrics = compute_metrics(
+             predictions,
+            targets,
+        )       
+        
+        metrics["loss"] = metrics["mse"]
+        
         return metrics
 
     def _step_scheduler(self, validation_loss: float) -> None:

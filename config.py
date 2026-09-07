@@ -16,10 +16,10 @@ import torch
 class DataConfig:
     image_dir: str = "dataset/all_c_scans_new"
     condition_dir: str = "dataset/impact_conditions"
-    image_size: int = 224
-    batch_size: int = 128
+    image_size: int = 256
+    batch_size: int = 32
     num_workers: int = 0
-    validation_ratio: float = 0.2
+    validation_ratio: float = 0.1
     thickness_per_ply_mm: float = 0.1875
 
 
@@ -32,7 +32,7 @@ class ModelConfig:
         "/home/rei/mnt/code/lcx/model/"
         "dinov3-vitb16-pretrain-lvd1689m"
     )
-    freeze_backbone: bool = True
+    freeze_backbone: bool = False
     hidden_dim: int = 128
     dropout: float = 0.007
     output_dim: int = 1

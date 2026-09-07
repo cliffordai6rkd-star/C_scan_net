@@ -383,36 +383,12 @@ def split_records(
 
 
 def build_transforms(
-    image_size: int = 224,
-    train: bool = True,
+    image_size: int = 256,
 ):
-    """
-    构造图像预处理。
-
-    C-Scan 原图是 256x256 RGB。
-    ResNet 通常使用 224x224 输入。
-    """
     normalization = transforms.Normalize(
         mean=[0.485, 0.456, 0.406],
         std=[0.229, 0.224, 0.225],
     )
-
-    if train:
-        return transforms.Compose(
-            [
-                transforms.Resize(
-                    (image_size, image_size)
-                ),
-                transforms.RandomHorizontalFlip(
-                    p=0.5
-                ),
-                transforms.RandomVerticalFlip(
-                    p=0.5
-                ),
-                transforms.ToTensor(),
-                normalization,
-            ]
-        )
 
     return transforms.Compose(
         [
@@ -423,7 +399,6 @@ def build_transforms(
             normalization,
         ]
     )
-
 
 class CScanDataset(Dataset):
     """
@@ -444,19 +419,48 @@ class CScanDataset(Dataset):
         self,
         records: List[SampleRecord],
         transform=None,
+        augment: bool = False,
     ):
         self.records = list(records)
         self.transform = transform
+        self.augment = augment
 
     def __len__(self) -> int:
+        if self.augment:
+            return len(self.records) * 6
         return len(self.records)
 
     def __getitem__(self, index: int) -> dict:
-        record = self.records[index]
+        from torchvision.transforms import functional as TF
+        if self.augment:
+            record_index = index // 6
+            augmentation_index = index % 6
+        else:
+            record_index = index
+            augmentation_index = 0
+
+        record = self.records[record_index]
 
         with Image.open(record.image_path) as image:
             image = image.convert("RGB")
             image = image.copy()
+
+        if self.augment:
+
+            if augmentation_index == 1:
+                image = TF.rotate(image, 90)
+
+            elif augmentation_index == 2:
+                image = TF.rotate(image, 180)
+
+            elif augmentation_index == 3:
+                image = TF.rotate(image, 270)
+
+            elif augmentation_index == 4:
+                image = TF.hflip(image)
+
+            elif augmentation_index == 5:
+                image = TF.vflip(image)
 
         if self.transform is not None:
             image = self.transform(image)
@@ -508,6 +512,7 @@ def build_datasets(
         transform=build_transforms(
             image_size=image_size,
             train=True,
+            augment=True,
         ),
     )
 
@@ -517,6 +522,7 @@ def build_datasets(
             image_size=image_size,
             train=False,
         ),
+        augment=False,
     )
 
     print()
